@@ -4,7 +4,7 @@ import os
 from fastapi import FastAPI, HTTPException
 from request_model import RequestModel
 from model import Model
-from deployment.services.ml.buisness_rules import get_model_by_buisness_rules
+from buisness_rules import get_model_by_buisness_rules
 app = FastAPI()
 
 logging.basicConfig(
@@ -21,24 +21,20 @@ path_to_config = os.path.join(os.path.dirname(__file__), 'config.yaml')
 logger.info(f'{path_to_config=}')
 
 model_catboost = Model(path_to_config, "catboost")
-#model_kmeans = Model(path_to_config, "kmeans")
-#model_decision_tree = Model(path_to_config)
+model_kmeans = Model(path_to_config, "kmeans")
+model_decision_tree = Model(path_to_config)
 model_dict = {
-    "catboost": model_catboost#,
-#    "kmeans": model_kmeans,
-#    "decision_tree" : model_decision_tree
+    "catboost": model_catboost,
+    "kmeans": model_kmeans,
+    "decision_tree" : model_decision_tree
 }
 logger.info(f"available_models: {list(model_dict)}")
 
 
 @app.get("/predict")
 async def predict(data: RequestModel):
-    model, name = get_model_by_buisness_rules(model_dict, data, is_multi_model_enabled=False)
-
-@app.get("/predict")
-async def predict(data: RequestModel):
     try:
-        model, name = get_model_by_buisness_rules(model_dict, data, is_multi_model_enabled=False)
+        model = get_model_by_buisness_rules(model_dict, data.context, is_multi_model_enabled=False)
         logger.info(f"model_name: {model}")
         prediction = model.predict(data)
         logger.info(f'{prediction=}')
