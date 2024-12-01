@@ -4,3 +4,6 @@
 [submodule "services/frontend"]
 	path = services/frontend
 	url = https://github.com/HackAlfa/Frontend
+[submodule "services/ml"]
+	path = services/ml
+	url = https://github.com/HackAlfa/PythonMachine
