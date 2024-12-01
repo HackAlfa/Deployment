@@ -1,48 +1,48 @@
 services:
 
-  redis:
-    image: redis:8.0-M02-alpine
-    ports:
-      - 6379:6379
-    volumes:
-      - ./configs/redis:/usr/local/etc/redis
-    command: redis-server /usr/local/etc/redis/redis.conf
+  # redis:
+  #   image: redis:8.0-M02-alpine
+  #   ports:
+  #     - 6379:6379
+  #   volumes:
+  #     - ./configs/redis:/usr/local/etc/redis
+  #     - ./volumes/redis:/data
+  #   command: redis-server /usr/local/etc/redis/redis.conf
 
-  mongo:
-    image: mvertes/alpine-mongo:4.0.6-1
-    restart: always
+  # mongo:
+  #   image: mvertes/alpine-mongo:4.0.6-1
+  #   restart: always
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: 12345678
+  #   ports:
+  #     - 27017:27017
+  #   volumes:
+  #     - ./volumes/mongo:/data/db
+
+  frontend:
+    build: ./services/frontend
+    ports:
+      - 8000:8080
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: 12345678
+      - SERVER_PORT=8080
+      - BACKEND_ADDRESS=127.0.0.1:8080
+
+  backend:
+    build: ./services/backend
     ports:
-      - 27017:27017
-    volumes:
-      - ./volumes/mongo:/data/db
-
-  # frontend:
-  #   build: ./services/frontend
-  #   ports:
-  #     - 8000:8080
-  #   environment:
-  #     - SERVER_PORT=8080
-  #     - BACKEND_ADDRESS=127.0.0.1:8080
-
-  # backend:
-  #   build: ./services/backend
-  #   ports:
-  #     - 8010:8080
-  #   environment:
-  #     - SERVER_PORT=8080
-  #     - ML_ADDRESS=ml:8080
-  #     - REDIS_CREDENTIALS=redis:6379
+      - 8010:8080
+    environment:
+      - SERVER_PORT=8080
+      - ML_ADDRESS=ml:8080
+      - REDIS_ADDRESS=redis:6379
 
   ml:
     build: ./services/ml
     ports:
-      - 8011:8000
-      - 1234:27017
+      - 8011:8080
     environment:
-      - SERVER_PORT=8000 # TO-DO: read .env
+      - SERVER_PORT=8080
       # - MONGO_ADDRESS=mongo:27017
       # - MONGO_USER=root
       # - MONGO_PASSWORD=12345678
