@@ -1,3 +1,5 @@
+from functions import explain_decision, get_interpretesions
+
 def get_model_by_buisness_rules(model_dict, context, is_multi_model_enabled):
     if is_multi_model_enabled:
         if context == "Главная":
@@ -47,3 +49,15 @@ def get_basic_recommendation_text(context, prediction):
     else:
         text = "Используйте PayControl - самый быстрый способ подписания"
     return text
+
+def get_special_text(tree, data, feature_store_columns, method):
+    """ Возвращает рекомендацию вида:
+    Мы рекомендуем вам **class #2 - у него **описание плюсов**.
+        Вы получили эту рекомендацию, так у таких же как вы пользователей:
+        Количество подписаний важных документов в web в среднем = 0 . У вас - 10
+        -Количество подписаний важных документов в мобайле в среднем = 1 . У вас - 0
+        -Количество подписаний важных документов в web в среднем = 0 . У вас - 10"""
+    conditions = explain_decision(tree, data, feature_store_columns)
+    return f" рекомендуем вам  {method}, потому что у него **перечисление плюсов**. Вы получили эту рекомендацию, тк у таких же как вы пользователей: \n-", get_interpretesions(conditions, data)
+    
+
