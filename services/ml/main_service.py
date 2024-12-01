@@ -4,7 +4,7 @@ import os
 from fastapi import FastAPI, HTTPException
 from request_model import RequestModel
 from model import Model
-from buisness_rules import get_model_by_buisness_rules
+from buisness_rules import get_model_by_buisness_rules, get_basic_recommendation_text
 app = FastAPI()
 
 logging.basicConfig(
@@ -37,8 +37,10 @@ async def predict(data: RequestModel):
         model = get_model_by_buisness_rules(model_dict, data.context, is_multi_model_enabled=False)
         logger.info(f"model_name: {model}")
         prediction = model.predict(data)
+        text = get_basic_recommendation_text(data.context, prediction)
         logger.info(f'{prediction=}')
-        return {"prediction": prediction}
+        logger.info(f'{text=}')
+        return {"prediction": prediction, "text": text}
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Error during prediction: {str(e)}")
