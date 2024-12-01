@@ -20,42 +20,44 @@ services:
     volumes:
       - ./volumes/mongo:/data/db
 
-  frontend:
-    build: ./services/frontend
-    ports:
-      - 8000:8080
-    environment:
-      - SERVER_PORT=8080
-      - BACKEND_ADDRESS=127.0.0.1:8080
+  # frontend:
+  #   build: ./services/frontend
+  #   ports:
+  #     - 8000:8080
+  #   environment:
+  #     - SERVER_PORT=8080
+  #     - BACKEND_ADDRESS=127.0.0.1:8080
 
   backend:
     build: ./services/backend
+    restart: always
     ports:
       - 8010:8080
     environment:
       - SERVER_PORT=8080
-      - ML_ADDRESS=ml:8080
+      - ML_ADDRESS=ml:8000/predict
       - REDIS_ADDRESS=redis:6379
 
   ml:
     build: ./services/ml
+    restart: always
     ports:
-      - 8011:8080
+      - 8011:8000
     environment:
-      - SERVER_PORT=8080
+      - SERVER_PORT=8000
       # - MONGO_ADDRESS=mongo:27017
       # - MONGO_USER=root
       # - MONGO_PASSWORD=12345678
     volumes:
       - ./volumes/models:/app/models
 
-  ml-edu:
-    build: ./services/ml-edu
-    ports:
-      - 8012:8080
-    environment:
-      - MONGO_ADDRESS=mongo:27017
-      - MONGO_USER=root
-      - MONGO_PASSWORD=12345678
-    volumes:
-      - ./volumes/models:/app/models
+  # ml-edu:
+  #   build: ./services/ml-edu
+  #   ports:
+  #     - 8012:8080
+  #   environment:
+  #     - MONGO_ADDRESS=mongo:27017
+  #     - MONGO_USER=root
+  #     - MONGO_PASSWORD=12345678
+  #   volumes:
+  #     - ./volumes/models:/app/models
