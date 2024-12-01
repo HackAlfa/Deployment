@@ -1,0 +1,6 @@
+[submodule "services/backend"]
+	path = services/backend
+	url = https://github.com/HackAlfa/Backend
+[submodule "services/frontend"]
+	path = services/frontend
+	url = https://github.com/HackAlfa/Frontend
